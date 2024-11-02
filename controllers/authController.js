@@ -1,27 +1,22 @@
-// controllers/authController.js
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
 const authController = {
-  // Register new user
   register: async (req, res) => {
     try {
       const { email, password } = req.body;
 
-      // Check if user already exists
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         return res.status(400).json({ error: 'Email already registered' });
       }
 
-      // Create new user
       const user = new User({ email, password });
       await user.save();
 
-      // Generate token
       const token = jwt.sign(
         { userId: user._id },
-        process.env.JWT_SECRET || 'default-secret-key',
+        process.env.JWT_SECRET,
         { expiresIn: '24h' }
       );
 
@@ -31,18 +26,15 @@ const authController = {
     }
   },
 
-  // Login user
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
 
-      // Find user
       const user = await User.findOne({ email });
       if (!user || !(await user.comparePassword(password))) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
 
-      // Generate token
       const token = jwt.sign(
         { userId: user._id },
         process.env.JWT_SECRET || 'default-secret-key',
@@ -55,7 +47,6 @@ const authController = {
     }
   },
 
-  // Get user profile
   getProfile: async (req, res) => {
     try {
       const user = await User.findById(req.userId).select('-password');

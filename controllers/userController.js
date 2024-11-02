@@ -1,4 +1,3 @@
-// controllers/userController.js
 const User = require('../models/User');
 
 const userController = {
@@ -11,7 +10,6 @@ const userController = {
       res.status(400).json({ error: error.message });
     }
   },
-  // Additional user-related functions (e.g., update, delete)
 };
 
 module.exports = userController;
